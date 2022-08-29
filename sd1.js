@@ -5,7 +5,7 @@ function parseSdealDate(dateStr, timeStr, TODAY = new Date(), hourZoneShift = -1
   if (dateStr == 'Today') {} else if (dateStr == 'Yesterday') {
     day = TODAY.getDate() - 1;
   } else {
-    var reg1 = dateStr.match(/^(\\d+)-(\\d+)-(\\d+)$/);
+    var reg1 = dateStr.match(/^(\d+)-(\d+)-(\d+)$/);
     if (reg1 != null) {
       month = Number(reg1[1]) - 1;
       day = Number(reg1[2]);
@@ -18,7 +18,7 @@ function parseSdealDate(dateStr, timeStr, TODAY = new Date(), hourZoneShift = -1
   var hour = 0,
     min = 0,
     ampm = '';
-  var reg = timeStr.match(/(\\d+):(\\d+) (AM|PM)/);
+  var reg = timeStr.match(/(\d+):(\d+) (AM|PM)/);
   if (reg != null) {
     hour = Number(reg[1]);
     min = Number(reg[2]);
@@ -81,77 +81,74 @@ function filterApply(scoreT = 2, viewsT = 10, repliesT = 0, votesT = 0) {
     var titleObj = data.find('.mobile_threadbit_title a');
     var link = 'https://slickdeals.net' + titleObj.attr('href');
 
-    if (link & link.match(/\\?\\w+=\\w+/)) link += '&' + mobile_url_param;
+    if (link & link.match(/\?\w+=\w+/)) link += '&' + mobile_url_param;
     else link += '?' + mobile_url_param;
 
     var title = titleObj.text().trim();
-    var reg0 = link.match(/\\/f\\ / (\\d + ) - /);
-      var sdid = null;
-      if (reg0 != null) {
-        sdid = reg0[1];
-      } else {
-        console.error('sdeal.parseSd(): unknown mobile_threadbit_title: ' + title);
-      }
-
-      var detailObj = data.find('.mobile_threadbit_details');
-      var details = detailObj.text().trim().replace(/(?:\\r\\n|\\r|\\n)/g, ' ');
-
-      var reg = details.match(/^(\\S+)\\s+([^-]+) -\\s*(.*)\\s*Replies: (\\S*) -.*Views: (\\S*) -/);
-      var poster = '', time = null, replies = 0, views = 0;
-      if (reg != null) {
-        time = parseSdealDate(reg[1], reg[2], TODAY);
-        poster = reg[3];
-        replies = reg[4].replace(/,/g, '');
-        views = reg[5].replace(/,/g, '');
-        if (replies == '-') replies = 0;
-        if (views == '-') views = 0;
-      } else {
-        console.error('sdeal.parseSd(): unknown mobile_threadbit_details text(): ' + details);
-      }
-
-
-      var hasFP = false;
-      var scoreObj = detailObj.find('span img.inlineimg');
-      var scoreStr = scoreObj.attr('alt');
-      if (scoreObj.length > 1) {
-        hasFP = true;
-        scoreStr = $(scoreObj[1]).attr('alt');
-      }
-      var votes = 0;
-      var score = 0;
-      if (scoreStr != undefined) {
-        var reg1 = scoreStr.match(/Votes: (\\S*) Score: (\\S*)/);
-        if (reg1) {
-          votes = reg1[1].replace(/,/g, '');
-          score = reg1[2].replace(/,/g, '');
-        } else {
-          console.error('sdeal.parseSd(): unknown scoreStr: ' + scoreStr + ', scoreObj=' + $.html(scoreObj));
-        }
-      }
-
-
-      if (titleObj.parent().text().trim().match(/^Moved:/)) {
-        isMoved = true;
-        console.log('Moved: detected, to skip');
-        toHide = true;
-      }
-
-      var strout = '++ item[' + k + '][' + sdid + ']: scoreVoteReplyViews=' + score + ',' + votes + ',' + replies + ',' + views + ' ' + title;
-
-      if (toHide || score < scoreT ||
-        views < viewsT ||
-        replies < repliesT ||
-        votes < votesT) {
-        tr.attr("style", "display:none");
-        console.log('\\n' + 'HIDE: ' + strout);
-        nHideItems++;
-      } else {
-        tr.removeAttr("style");
-      }
-
-      k++;
+    var reg0 = link.match(/\/f\ /(\d + ) - /);
+    var sdid = null;
+    if (reg0 != null) {
+      sdid = reg0[1];
+    } else {
+      console.error('sdeal.parseSd(): unknown mobile_threadbit_title: ' + title);
     }
-    nHideItems++;
-    $('#filterLabel').html('<b>' + nHideItems + '</b> hiddden');
-  };
-}
+
+    var detailObj = data.find('.mobile_threadbit_details');
+    var details = detailObj.text().trim().replace(/(?:\r\n|\r|\n)/g, ' ');
+
+    var reg = details.match(/^(\S+)\s+([^-]+) -\s*(.*)\s*Replies: (\S*) -.*Views: (\S*) -/);
+    var poster = '', time = null, replies = 0, views = 0;
+    if (reg != null) {
+      time = parseSdealDate(reg[1], reg[2], TODAY);
+      poster = reg[3];
+      replies = reg[4].replace(/,/g, '');
+      views = reg[5].replace(/,/g, '');
+      if (replies == '-') replies = 0;
+      if (views == '-') views = 0;
+    } else {
+      console.error('sdeal.parseSd(): unknown mobile_threadbit_details text(): ' + details);
+    }
+
+    var hasFP = false;
+    var scoreObj = detailObj.find('span img.inlineimg');
+    var scoreStr = scoreObj.attr('alt');
+    if (scoreObj.length > 1) {
+      hasFP = true;
+      scoreStr = $(scoreObj[1]).attr('alt');
+    }
+    var votes = 0;
+    var score = 0;
+    if (scoreStr != undefined) {
+      var reg1 = scoreStr.match(/Votes: (\S*) Score: (\S*)/);
+      if (reg1) {
+        votes = reg1[1].replace(/,/g, '');
+        score = reg1[2].replace(/,/g, '');
+      } else {
+        console.error('sdeal.parseSd(): unknown scoreStr: ' + scoreStr + ', scoreObj=' + $.html(scoreObj));
+      }
+    }
+
+    if (titleObj.parent().text().trim().match(/^Moved:/)) {
+      isMoved = true;
+      console.log('Moved: detected, to skip');
+      toHide = true;
+    }
+
+    var strout = '++ item[' + k + '][' + sdid + ']: scoreVoteReplyViews=' + score + ',' + votes + ',' + replies + ',' + views + ' ' + title;
+
+    if (toHide || score < scoreT ||
+      views < viewsT ||
+      replies < repliesT ||
+      votes < votesT) {
+      tr.attr("style", "display:none");
+      console.log('\n' + 'HIDE: ' + strout);
+      nHideItems++;
+    } else {
+      tr.removeAttr("style");
+    }
+
+    k++;
+  }
+  nHideItems++;
+  $('#filterLabel').html('<b>' + nHideItems + '</b> hiddden');
+};
