@@ -167,9 +167,9 @@ $(document).ready(function(){
     $('#filterLabel').html('<b>'+nHideItems + '</b> hiddden');
   };
 
-  if (window.location.href.includes('slickdeals.net/forums/filtered/?f=9')) {
+  //if (window.location.href.includes('slickdeals.net/forums/filtered/?f=9')) {
     setTimeout(function(){
       filterApply(2,10,0,0);
     }, 2000);
-  }
+  //}
 });
