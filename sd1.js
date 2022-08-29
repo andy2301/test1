@@ -154,3 +154,4 @@ function filterApply(scoreT = 2, viewsT = 10, repliesT = 0, votesT = 0) {
     nHideItems++;
     $('#filterLabel').html('<b>' + nHideItems + '</b> hiddden');
   };
+}
