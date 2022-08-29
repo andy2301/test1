@@ -85,7 +85,7 @@ function filterApply(scoreT = 2, viewsT = 10, repliesT = 0, votesT = 0) {
     else link += '?' + mobile_url_param;
 
     var title = titleObj.text().trim();
-    var reg0 = link.match(/\/f\ /(\d + ) - /);
+    var reg0 = link.match(/\/f\/(\d+)-/);
     var sdid = null;
     if (reg0 != null) {
       sdid = reg0[1];
