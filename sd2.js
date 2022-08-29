@@ -1,4 +1,4 @@
-function parseSdealDate(dateStr, timeStr, TODAY = new Date(), hourZoneShift = -1) {
+function parseSdDate(dateStr, timeStr, TODAY = new Date(), hourZoneShift = -1) {
   var year = TODAY.getFullYear();
   var month = TODAY.getMonth();
   var day = TODAY.getDate();
@@ -11,7 +11,7 @@ function parseSdealDate(dateStr, timeStr, TODAY = new Date(), hourZoneShift = -1
       day = Number(reg1[2]);
       year = Number(reg1[3]);
     } else {
-      console.error('parseSdealDate(): unknown dateStr param ' + dateStr);
+      console.error('parseSdDate(): unknown dateStr param ' + dateStr);
     }
   }
 
@@ -30,7 +30,7 @@ function parseSdealDate(dateStr, timeStr, TODAY = new Date(), hourZoneShift = -1
       hour += 12;
     }
   } else {
-    console.error('parseSdealDate(): unknown timeStr param ' + timeStr);
+    console.error('parseSdDate(): unknown timeStr param ' + timeStr);
   }
 
   var retDate = new Date(year, month, day, hour, min, 0);
@@ -91,7 +91,7 @@ function filterApply(scoreT = 2, viewsT = 10, repliesT = 0, votesT = 0) {
     if (reg0 != null) {
       sdid = reg0[1];
     } else {
-      console.error('sdeal.parseSd(): unknown mobile_threadbit_title: ' + title);
+      console.error('sd.parseSd(): unknown mobile_threadbit_title: ' + title);
     }
 
     var detailObj = data.find('.mobile_threadbit_details');
@@ -100,14 +100,14 @@ function filterApply(scoreT = 2, viewsT = 10, repliesT = 0, votesT = 0) {
     var reg = details.match(/^(\S+)\s+([^-]+) -\s*(.*)\s*Replies: (\S*) -.*Views: (\S*) -/);
     var poster = '', time = null, replies = 0, views = 0;
     if (reg != null) {
-      time = parseSdealDate(reg[1], reg[2], TODAY);
+      time = parseSdDate(reg[1], reg[2], TODAY);
       poster = reg[3];
       replies = reg[4].replace(/,/g, '');
       views = reg[5].replace(/,/g, '');
       if (replies == '-') replies = 0;
       if (views == '-') views = 0;
     } else {
-      console.error('sdeal.parseSd(): unknown mobile_threadbit_details text(): ' + details);
+      console.error('sd.parseSd(): unknown mobile_threadbit_details text(): ' + details);
     }
 
     var hasFP = false;
@@ -125,7 +125,7 @@ function filterApply(scoreT = 2, viewsT = 10, repliesT = 0, votesT = 0) {
         votes = reg1[1].replace(/,/g, '');
         score = reg1[2].replace(/,/g, '');
       } else {
-        console.error('sdeal.parseSd(): unknown scoreStr: ' + scoreStr + ', scoreObj=' + $.html(scoreObj));
+        console.error('sd.parseSd(): unknown scoreStr: ' + scoreStr + ', scoreObj=' + $.html(scoreObj));
       }
     }
 
