@@ -79,7 +79,8 @@ function filterApply(scoreT = 2, viewsT = 10, repliesT = 0, votesT = 0) {
     }
 
     var titleObj = data.find('.mobile_threadbit_title a');
-    var link = 'https://slickdeals.net' + titleObj.attr('href');
+    //var link = 'https://slickdeals.net' + titleObj.attr('href');
+    var link = titleObj.attr('href');
 
     if (link & link.match(/\?\w+=\w+/)) link += '&' + mobile_url_param;
     else link += '?' + mobile_url_param;
